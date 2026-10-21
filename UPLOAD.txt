@@ -1,0 +1,106 @@
+macrotonal.org — Duncan's string parts (18 Oct 2026)
+
+Upload everything inside scores/ to the same paths in the site repo:
+
+  scores/index.html                     scores page: Strings grouped by recording pass, one row per part
+  scores/ensemble.html                  interactive scores: string parts re-allocated to match
+  scores/goldenhour/strings/            13 parts + full score + Golden Hour Strings.mscz
+  scores/rgb/strings/                   13 parts + full score + RGB Strings.mscz
+  scores/moonliteucalyptus/Strings/     10 parts + full score + Moonlit Eucalyptus Strings.mscz
+
+  The PDFs are re-engraved in MuseScore from the original files in Duncan's allocation (no
+  player initials anywhere), all text in Futura, with GH Violin 1 F# and GH Cello 4 at bars 71-146 corrected. The three
+  .mscz files REPLACE the old ones of the same name (old part layout).
+  Some new PDFs and Moonlit audio files have the same names as old ones (e.g. "Moonlit Violin 3.mp3")
+  and will overwrite them with the new parts' content. That is intended.
+
+  scores/goldenhour/audio/strings/      13 part tracks + Pass 1-3 mixes   (new folder)
+  scores/rgb/audio/strings/             13 part tracks + Pass 1-3 mixes
+  scores/moonliteucalyptus/audio/strings/  10 part tracks + Pass 1-2 mixes
+
+  Every part has its own track named after its part (e.g. "Golden Hour Viola 1.mp3"),
+  played and downloaded from its row. All audio is the sampler renders: most part tracks are
+  exact copies of the existing renders under the new name; merged parts are two renders added
+  together; Moonlit Cello 1/2 have Duncan's shortened notes cut in; each pass mix is its five
+  part tracks added together. Every file is under GitHub's 25 MB upload limit (~610 MB in all,
+  so upload in batches).
+
+Optional tidy-up AFTER uploading (keeps the repo small). Nothing on the site links to these any more
+(checked: scores page, home, hocket, ear trainer, tuner, ensemble). Safe to delete:
+
+  scores/goldenhour/audio/parts/strings/cello1.mp3
+  scores/goldenhour/audio/parts/strings/cello2.mp3
+  scores/goldenhour/audio/parts/strings/cello3.mp3
+  scores/goldenhour/audio/parts/strings/cello4.mp3
+  scores/goldenhour/audio/parts/strings/lowcello1.mp3
+  scores/goldenhour/audio/parts/strings/lowcello2.mp3
+  scores/goldenhour/audio/parts/strings/viola1.mp3
+  scores/goldenhour/audio/parts/strings/viola2.mp3
+  scores/goldenhour/audio/parts/strings/violin1.mp3
+  scores/goldenhour/audio/parts/strings/violin2.mp3
+  scores/goldenhour/audio/parts/strings/violin3.mp3
+  scores/goldenhour/audio/parts/strings/violin4.mp3
+  scores/goldenhour/audio/parts/strings/violin5.mp3
+  scores/goldenhour/strings/Golden Hour Low Cello 2 (Oct Down).pdf
+  scores/goldenhour/strings/Golden Hour Strings.pdf
+  scores/goldenhour/strings/Golden Hour Violin 5.pdf
+  scores/moonliteucalyptus/Strings/Moonlit Eucalyptus Strings.pdf
+  scores/moonliteucalyptus/Strings/Moonlit Eucalyptus Violin 5.pdf
+  scores/moonliteucalyptus/Strings/Moonlit Eucalyptus Violin 6.pdf
+  scores/moonliteucalyptus/Strings/Moonlit Eucalyptus Violin 7.pdf
+  scores/moonliteucalyptus/audio/strings/Moonlit Violin 5.mp3
+  scores/moonliteucalyptus/audio/strings/Moonlit Violin 6.mp3
+  scores/moonliteucalyptus/audio/strings/Moonlit Violin 7.mp3
+  scores/rgb/audio/strings/Blue Cello.mp3
+  scores/rgb/audio/strings/Blue Viola 1.mp3
+  scores/rgb/audio/strings/Blue Viola 2.mp3
+  scores/rgb/audio/strings/Blue Viola 3.mp3
+  scores/rgb/audio/strings/Blue Viola 4.mp3
+  scores/rgb/audio/strings/Green Violin 1.mp3
+  scores/rgb/audio/strings/Green Violin 2.mp3
+  scores/rgb/audio/strings/Low Cello 1.mp3
+  scores/rgb/audio/strings/Low Cello 2.mp3
+  scores/rgb/audio/strings/Low Cello 3.mp3
+  scores/rgb/audio/strings/Red Cello 1.mp3
+  scores/rgb/audio/strings/Red Cello 2.mp3
+  scores/rgb/audio/strings/Violin Lead 1.mp3
+  scores/rgb/audio/strings/Violin Lead 2.mp3
+  scores/rgb/audio/strings/Violin Lead 3.mp3
+  scores/rgb/audio/strings/Violin Lead 4.mp3
+  scores/rgb/strings/RGB Blue Cello.pdf
+  scores/rgb/strings/RGB Blue Viola 4.pdf
+  scores/rgb/strings/RGB Green Violin 1.pdf
+  scores/rgb/strings/RGB Green Violin 2.pdf
+  scores/rgb/strings/RGB Low Cello 3.pdf
+  scores/rgb/strings/RGB Strings.pdf
+  scores/rgb/strings/RGB Violin Lead 1.pdf
+  scores/rgb/strings/RGB Violin Lead 2.pdf
+  scores/rgb/strings/RGB Violin Lead 3.pdf
+  scores/rgb/strings/RGB Violin Lead 4.pdf
+
+  (rgb/audio/strings/Low Cello 3.mp3 never existed on the site - skip it if GitHub can't find it.)
+
+------------------------------------------------------------------------------------------
+22 Oct 2026 - site restyle (Associated Board look, Observer Sharp fonts)
+
+Every page of the site is in this folder now. Upload each to the same path in the repo:
+
+  index.html                    home page (now with a Photography link)
+  photos/                       NEW photography page: photos/index.html plus
+                                photos/strings/full/ (33) and photos/strings/thumb/ (33),
+                                13 MB in all - upload the whole folder, keeping its structure
+  scores/index.html             scores page (also has the string changes above)
+  scores/ensemble.html          interactive scores (also has the string changes above)
+  scores/hocket.html            saxophone hocket
+  harp/index.html               harp enharmonic spelling
+  macroeartrainer/index.html    ear trainer
+  macrokey/index.html           theory reference
+  tuner/index.html              tuner (now also links the site icons)
+  favicon.svg, favicon.png,     the site icon in the new green and cream (replace the old ones
+  apple-touch-icon.png          at the top level of the repo)
+
+  Grained cover green (#33402f) with cream type; Observer Sharp for titles, Observer Sharp
+  Book for names, labels and links; Observer Text and its italic unchanged. The fonts and
+  the grain are built into each page, so there is nothing else to upload. The scores page,
+  interactive scores, ear trainer, theory reference and the harp page's buttons keep
+  their own buttons, menus and rollover greens.
