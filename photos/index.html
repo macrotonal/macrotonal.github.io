@@ -54,16 +54,23 @@ h1{font-family:var(--ab-sharp); font-weight:normal; font-size:clamp(28px,5.4vw,4
 .hero{display:block; margin-bottom:6px; cursor:zoom-in}
 .hero img{display:block; width:100%; height:auto; background:var(--ab-green-deep)}
 /* justified rows: every photo keeps its shape, rows fill the width, nothing is cropped */
-.grid{--rowh:230px; display:flex; flex-wrap:wrap; gap:6px}
+.grid{--rowh:230px; --gap:6px; display:flex; flex-wrap:wrap; gap:var(--gap)}
 .grid::after{content:''; flex-grow:1000000}
 .ph{display:block; flex-grow:calc(var(--ar) * 100); width:calc(var(--ar) * var(--rowh)); cursor:zoom-in}
 .ph img{display:block; width:100%; height:auto; aspect-ratio:var(--ar); background:var(--ab-green-deep);
   transition:opacity .2s}
 .ph:hover img,.hero:hover img{opacity:.88}
+/* balanced rows (laid out by the script below): every row, the last included, runs the
+   full width; the CSS-only rows above remain the fallback without JavaScript */
+.grid.rows{display:block}
+.grid.rows::after{content:none}
+.grid .row{display:flex; gap:inherit; margin-bottom:var(--gap)}
+.grid .row:last-child{margin-bottom:0}
+.grid .row .ph{flex:var(--ar) 1 0%; width:auto}
 .ft{text-align:center; font-family:var(--ab-book); font-size:12px; letter-spacing:.24em; text-transform:uppercase}
 .ft a{text-decoration:none; color:var(--ab-cream-dim)}
 .ft a:hover{color:var(--ab-cream)}
-@media (max-width:640px){ .wrap{padding-top:40px} .grid{--rowh:140px; gap:4px} .hd{margin-bottom:40px} }
+@media (max-width:640px){ .wrap{padding-top:40px} .grid{--rowh:140px; --gap:4px} .hd{margin-bottom:40px} }
 
 /* the viewer */
 .lb{position:fixed; inset:0; z-index:50; background:rgba(26,32,22,.97); display:flex; align-items:center;
@@ -121,6 +128,56 @@ h1{font-family:var(--ab-sharp); font-weight:normal; font-size:clamp(28px,5.4vw,4
 <div class="count"></div>
 </div>
 <script>
+/* Balanced rows. Photos keep their order and shape; the only choice is where each row
+   breaks. A row of photos with aspect ratios a1..ak, justified to width W, is
+   (W - gaps) / sum(a) tall, so dynamic programming over the break points finds the
+   rows whose heights sit closest to the target (--rowh) - all of them full width. */
+(function(){
+  var grid = document.querySelector('.grid');
+  if(!grid) return;
+  var items = Array.prototype.slice.call(grid.querySelectorAll('.ph'));
+  var ar = items.map(function(a){ return parseFloat(a.style.getPropertyValue('--ar')); });
+  var lastW = 0;
+  function layout(){
+    var W = grid.clientWidth;
+    if(!W || W === lastW) return;
+    lastW = W;
+    var cs = getComputedStyle(grid);
+    var gap = parseFloat(cs.getPropertyValue('--gap')) || 6, H = parseFloat(cs.getPropertyValue('--rowh')) || 230;
+    var n = items.length, cost = [0], from = [0];
+    for(var j = 1; j <= n; j++){
+      cost[j] = Infinity;
+      for(var i = j - 1, sum = 0; i >= 0; i--){
+        sum += ar[i];
+        var h = (W - gap * (j - i - 1)) / sum;
+        if(h < H * 0.5) break;                       /* rows only get shorter from here */
+        var c = cost[i] + Math.pow((h - H) / H, 2);
+        if(c < cost[j]){ cost[j] = c; from[j] = i; }
+      }
+    }
+    var breaks = [];
+    for(var k = n; k > 0; k = from[k]) breaks.unshift(from[k]);
+    breaks.push(n);
+    var frag = document.createDocumentFragment();
+    for(var r = 0; r + 1 < breaks.length; r++){
+      var row = document.createElement('div');
+      row.className = 'row';
+      for(var m = breaks[r]; m < breaks[r + 1]; m++) row.appendChild(items[m]);
+      frag.appendChild(row);
+    }
+    grid.textContent = '';
+    grid.appendChild(frag);
+    grid.classList.add('rows');
+  }
+  layout();
+  var pending = false;
+  window.addEventListener('resize', function(){
+    if(pending) return;
+    pending = true;
+    requestAnimationFrame(function(){ pending = false; layout(); });
+  });
+})();
+
 (function(){
   var lb = document.querySelector('.lb'), img = lb.querySelector('img'), count = lb.querySelector('.count');
   var links = Array.prototype.slice.call(document.querySelectorAll('[data-i]')), at = -1, pushed = false;
