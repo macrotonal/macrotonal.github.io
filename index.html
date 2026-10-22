@@ -278,7 +278,8 @@ h1{font-family:var(--ab-sharp); color:var(--ab-cream); letter-spacing:.16em; tex
 /* the page fits one screen, phone or laptop: everything vertical follows the viewport
    height (svh = the height with a phone's browser bars showing), so the whole list,
    Photography included, is visible without scrolling */
-body{padding:clamp(14px,3.2vh,40px) 20px clamp(18px,4vh,60px); min-height:100vh; min-height:100svh}
+body{padding:clamp(16px,4.4vh,48px) 20px clamp(12px,2.8vh,34px); min-height:100vh; min-height:100svh}
+body{padding-top:clamp(16px,4.4svh,48px); padding-bottom:clamp(12px,2.8svh,34px)}   /* equal space above the sunburst and below the last link */
 .logo-wrap{margin-bottom:clamp(10px,2.6vh,36px); margin-bottom:clamp(10px,2.6svh,36px)}
 .macro-graphic{width:clamp(90px,19.5vh,240px); width:clamp(90px,19.5svh,240px)}   /* Sam: tried 14, 15.5 and 17vh, "bigger again" */
 h1{font-size:clamp(28px,min(7vw,6.2vh),62px); margin-bottom:clamp(8px,1.7vh,18px)}
@@ -286,9 +287,9 @@ h1{font-size:clamp(28px,min(7vw,6.2vh),62px); margin-bottom:clamp(8px,1.7vh,18px
    so the title sat ~.03em right of centre; a smaller indent (letter-spacing still .16em) evens it */
 h1{text-indent:.10em}
 .chapter{margin:0 0 clamp(10px,2.2vh,22px)}
-.header{margin-bottom:clamp(12px,3.4vh,46px)}
+.header{margin-bottom:clamp(16px,5vh,56px); margin-bottom:clamp(16px,5svh,56px)}   /* Sam: a little gap under the banner */
 .tools{margin-bottom:0}
-.tool-card{padding:clamp(4px,1.1vh,13px) 0; padding:clamp(4px,1.1svh,13px) 0}
+.tool-card{padding:clamp(6px,1.6vh,15px) 0; padding:clamp(6px,1.6svh,15px) 0}   /* Sam: links "a little too close" at 1.1 */
 .tool-name{font-size:clamp(12px,1.9vh,14px)}
 /* the label stays on one line on a phone */
 .subtitle{white-space:nowrap}
