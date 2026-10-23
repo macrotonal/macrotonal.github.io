@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<script>/* iPhone: iOS 26 Safari shows the page under its status bar only once the page is
+   scrolled, so this page sits scrolled a little (.ios-bleed in the CSS) */
+if (/iPhone|iPod/.test(navigator.userAgent) || /[?&]iosbleed/.test(location.search))   /* ?iosbleed: QA on a desktop */
+  document.documentElement.classList.add('ios-bleed');</script>
 <title>Macro - Tools</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
@@ -296,21 +300,40 @@ h1{text-indent:.10em}
 @media (max-width:480px){ .subtitle{font-size:10px; letter-spacing:.2em; text-indent:.2em; padding:8px 12px 7px} }
 </style>
 <style id="marble-shadow">
-/* the shadow marbling: a layer behind the page, faded in once the bath is drawing */
-.frame-bath { position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  opacity: 0; transition: opacity 3.0s ease; }
+/* the shadow marbling: a layer behind the page (not position:fixed, which makes iOS 26
+   Safari paint its bars solid), faded in once the bath is drawing. 100lvh reaches under
+   Safari's bars; the page fits one screen, so the layer never needs to scroll with it. */
+.frame-bath { position: absolute; top: 0; left: 0; right: 0; height: 100%; height: 100lvh;
+  z-index: -1; pointer-events: none; opacity: 0; transition: opacity 3.0s ease; }
 .frame-bath.on { opacity: 1; }
 #marble-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 /* the shadow fills the root's box, so it must reach the bottom of the window */
 html { min-height: 100%; }
-/* the grained green stays on the root, under the bath; the body must not paint over it */
+/* the grained green stays on the root under the bath while it fades in; the body must not
+   paint over it. Once the bath is fully in, no page colour at all: iOS 26 Safari fades its
+   bars into the root colour, and with none there is no fade (Sam's iPhone, samannand.net) */
 html.marble-on body { background: none !important; }
+html.marble-clear, html.marble-clear body { background: none !important; }
 /* a press is the marbling's, never a text selection or the iOS callout */
 body, body * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+
+/* the iPhone: the page runs under Safari's bars (viewport-fit=cover), kept clear of them */
+body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0px) + var(--bleed, 0px));
+  padding-bottom: calc(clamp(12px, 2.8svh, 34px) + env(safe-area-inset-bottom, 0px)); }
+/* iPhone only (.ios-bleed, set in the head): Safari paints its status bar flat on a page
+   that isn't scrolled, so the page sits scrolled by --bleed with the bath bled above it and
+   below; one snap point brings it back if pulled */
+.ios-bleed { --bleed: 64px; overflow-y: scroll; overscroll-behavior-y: none; scroll-snap-type: y mandatory; }
+.ios-bleed body { min-height: calc(100lvh + var(--bleed)); }
+.ios-bleed .frame-bath { height: calc(100lvh + var(--bleed) + 160px); }
+.bleed-snap { display: none; }
+.ios-bleed .bleed-snap { display: block; position: absolute; top: var(--bleed); left: 0; width: 1px; height: 1px;
+  scroll-snap-align: start; pointer-events: none; }
 </style>
 </head>
 <body>
 <div class="frame-bath" aria-hidden="true"><canvas id="marble-canvas"></canvas></div>
+<div class="bleed-snap" aria-hidden="true"></div>
 
 
 <div class="wrap">
@@ -427,7 +450,24 @@ body, body * { -webkit-touch-callout: none; -webkit-user-select: none; user-sele
 </script>
 
 <script>
-/* start the shadow marbling a few seconds after the page, then fade it in */
+/* .ios-bleed: open scrolled to the bleed; the snap point keeps it there */
+(function(){
+  var root = document.documentElement;
+  if (!root.classList.contains('ios-bleed')) return;
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function settle(){
+    var b = parseFloat(getComputedStyle(root).getPropertyValue('--bleed')) || 0;
+    if (Math.abs(window.scrollY - b) > 1) window.scrollTo(0, b);
+  }
+  settle();
+  window.addEventListener('load', settle);
+  window.addEventListener('pageshow', settle);
+  window.addEventListener('orientationchange', function(){ setTimeout(settle, 300); });
+})();
+</script>
+<script>
+/* start the shadow marbling a few seconds after the page, fade it in, then drop the page
+   colour so Safari has nothing to tint its bars with */
 setTimeout(function(){
 (function(){
 'use strict';
@@ -2275,10 +2315,12 @@ try {
   if (window.console) console.warn('marbling:', err && err.message ? err.message : err);
 }
 })();
-  var bath = document.getElementById('marble-canvas');
+  var bath = document.getElementById('marble-canvas'), root = document.documentElement;
   if (!window.MARBLE || !bath || bath.style.display === 'none') return;
-  document.documentElement.classList.add('marble-on');
+  root.classList.add('marble-on');
   requestAnimationFrame(function(){ bath.parentNode.classList.add('on'); });
+  setTimeout(function(){ root.classList.add('marble-clear'); }, 3200);
+  bath.addEventListener('webglcontextlost', function(){ root.classList.remove('marble-on', 'marble-clear'); });
 }, 2500);
 </script>
 </body>
