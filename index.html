@@ -304,7 +304,11 @@ h1{text-indent:.10em}
 <style id="marble-shadow">
 /* Keep a dark root colour for Safari's glass. The canvas belongs to the document (not
    the fixed viewport), which lets Safari sample it beneath its translucent controls. */
-html, html.marble-clear { min-height: 100%; background: var(--ab-green) !important; background-image: none !important; }
+/* The green is only the pre-canvas fallback. Once the shadow canvas is available,
+   leave the root transparent so iPhone Safari samples the shaded page rather than
+   making solid green strips for its browser chrome. */
+html { min-height: 100%; background: var(--ab-green) !important; background-image: none !important; }
+html.marble-clear { background: transparent !important; background-image: none !important; }
 body, html.marble-on body, html.marble-clear body { position: relative; background: transparent !important; min-height: 100dvh; }
 .frame-bath { position: absolute; inset: 0; width: auto; height: auto;
   z-index: 1; pointer-events: none; opacity: 0; transition: opacity 3.0s ease; }
