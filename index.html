@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<!-- Keep Safari's translucent browser chrome over the same green as the page. -->
+<script>
+/* A slight initial scroll lets Safari's glass use the page beneath it rather than
+   its opaque safe-area colour. */
+if (/iPhone|iPod/.test(navigator.userAgent) || /[?&]iosbleed/.test(location.search))
+  document.documentElement.classList.add('ios-bleed');
+</script>
 <meta name="theme-color" content="#33402f">
 <title>Macro - Tools</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -298,24 +303,31 @@ h1{text-indent:.10em}
 @media (max-width:480px){ .subtitle{font-size:10px; letter-spacing:.2em; text-indent:.2em; padding:8px 12px 7px} }
 </style>
 <style id="marble-shadow">
-/* A viewport-sized bath stays behind the page while it scrolls. Keeping the root green
-   prevents iPhone Safari's translucent browser chrome from exposing the colour bath. */
+/* Keep a dark root colour for Safari's glass, while the fixed canvas supplies the
+   textured shadow throughout the page and under the browser chrome. */
 html, html.marble-clear { min-height: 100%; background: var(--ab-green) !important; background-image: none !important; }
 body, html.marble-on body, html.marble-clear body { background: transparent !important; min-height: 100dvh; }
-.frame-bath { position: fixed; inset: 0; width: 100%; height: 100dvh;
+.frame-bath { position: fixed; inset: 0; width: 100%; height: 100lvh;
   z-index: 1; pointer-events: none; opacity: 0; transition: opacity 3.0s ease; }
 .frame-bath.on { opacity: 1; }
 #marble-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 /* a press is the marbling's, never a text selection or the iOS callout */
 body, body * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 
-/* The safe-area padding keeps content clear of Safari chrome without forcing a scroll. */
-body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0px));
+/* Keep content clear of the iPhone's controls; --bleed only shifts the document, not the canvas. */
+body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0px) + var(--bleed, 0px));
   padding-bottom: calc(clamp(12px, 2.8svh, 34px) + env(safe-area-inset-bottom, 0px)); }
+/* Safari receives a continuously shaded fixed canvas when it makes its glass backdrop. */
+.ios-bleed { --bleed: 64px; overflow-y: scroll; overscroll-behavior-y: none; scroll-snap-type: y mandatory; }
+.ios-bleed body { min-height: calc(100lvh + var(--bleed)); }
+.bleed-snap { display: none; }
+.ios-bleed .bleed-snap { display: block; position: absolute; top: var(--bleed); left: 0; width: 1px; height: 1px;
+  scroll-snap-align: start; pointer-events: none; }
 </style>
 </head>
 <body>
 <div class="frame-bath" aria-hidden="true"><canvas id="marble-canvas"></canvas></div>
+<div class="bleed-snap" aria-hidden="true"></div>
 
 
 <div class="wrap">
@@ -431,6 +443,22 @@ body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0p
 })();
 </script>
 
+<script>
+/* Open at the small bleed offset; the background remains fixed behind it. */
+(function(){
+  var root = document.documentElement;
+  if (!root.classList.contains('ios-bleed')) return;
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function settle(){
+    var b = parseFloat(getComputedStyle(root).getPropertyValue('--bleed')) || 0;
+    if (Math.abs(window.scrollY - b) > 1) window.scrollTo(0, b);
+  }
+  settle();
+  window.addEventListener('load', settle);
+  window.addEventListener('pageshow', settle);
+  window.addEventListener('orientationchange', function(){ setTimeout(settle, 300); });
+})();
+</script>
 <script>
 /* Start the shadow marbling after the page has painted. */
 setTimeout(function(){
