@@ -3,12 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<script>
-/* A slight initial scroll lets Safari's glass use the page beneath it rather than
-   its opaque safe-area colour. */
-if (/iPhone|iPod/.test(navigator.userAgent) || /[?&]iosbleed/.test(location.search))
-  document.documentElement.classList.add('ios-bleed');
-</script>
+<script>/* iPhone: iOS 26 Safari shows the page under its status bar only once the page is
+   scrolled, so this page sits scrolled a little (.ios-bleed in the CSS) */
+if (/iPhone|iPod/.test(navigator.userAgent) || /[?&]iosbleed/.test(location.search))   /* ?iosbleed: QA on a desktop */
+  document.documentElement.classList.add('ios-bleed');</script>
 <title>Macro - Tools</title>
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32">
@@ -302,29 +300,30 @@ h1{text-indent:.10em}
 @media (max-width:480px){ .subtitle{font-size:10px; letter-spacing:.2em; text-indent:.2em; padding:8px 12px 7px} }
 </style>
 <style id="marble-shadow">
-/* Keep a dark root colour for Safari's glass. The canvas belongs to the document (not
-   the fixed viewport), which lets Safari sample it beneath its translucent controls. */
-/* The green is only the pre-canvas fallback. Once the shadow canvas is available,
-   leave the root transparent so iPhone Safari samples the shaded page rather than
-   making solid green strips for its browser chrome. */
-html { min-height: 100%; background: var(--ab-green) !important; background-image: none !important; }
-html.marble-clear { background: transparent !important; background-image: none !important; }
-body, html.marble-on body, html.marble-clear body { position: relative; background: transparent !important; min-height: 100dvh; }
-.frame-bath { position: absolute; inset: 0; width: auto; height: auto;
-  z-index: 1; pointer-events: none; opacity: 0; transition: opacity 3.0s ease; }
-.frame-bath.on { opacity: 1; }
+/* The same single-plate technique used by the working Macro page: the canvas remains
+   an ordinary document layer, while the menu is contained to one screen. Safari can then
+   use that layer beneath its glass controls instead of making separate colour bars. */
+.frame-bath { position: absolute; top: 0; left: 0; right: 0; height: 100%; height: 100lvh;
+  z-index: -1; pointer-events: none; }
 #marble-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+html { height: 100%; min-height: 100%; }
+/* The grain is just the pre-WebGL fallback. Once the bath is ready, Safari sees no solid
+   root/body colour to turn into bars; the canvas itself supplies the dark marbled shadow. */
+html.marble-on, html.marble-clear { background: transparent !important; }
+html.marble-on body, html.marble-clear body { background: none !important; }
 /* a press is the marbling's, never a text selection or the iOS callout */
 body, body * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 
-/* Keep content clear of the iPhone's controls. */
-body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0px) + var(--bleed, 0px));
+/* Keep this menu as a single screen plate, exactly like the working reference page. */
+body { height: 100%; min-height: 0; overflow: hidden;
+  padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0px) + var(--bleed, 0px));
   padding-bottom: calc(clamp(12px, 2.8svh, 34px) + env(safe-area-inset-bottom, 0px)); }
-/* Safari receives a continuously shaded document canvas when it makes its glass backdrop. */
+/* iPhone only (.ios-bleed, set in the head): Safari paints its status bar flat on a page
+   that isn't scrolled, so the page sits scrolled by --bleed with the bath bled above it and
+   below; one snap point brings it back if pulled */
 .ios-bleed { --bleed: 64px; overflow-y: scroll; overscroll-behavior-y: none; scroll-snap-type: y mandatory; }
-.ios-bleed body { min-height: calc(100lvh + var(--bleed)); }
-/* Extend the shaded layer into the space Safari uses for its status and address controls. */
-.ios-bleed .frame-bath { top: calc(-64px - env(safe-area-inset-top, 0px)); bottom: -220px; }
+.ios-bleed body { height: auto; min-height: calc(100lvh + var(--bleed)); overflow: visible; }
+.ios-bleed .frame-bath { height: calc(100lvh + var(--bleed) + 160px); }
 .bleed-snap { display: none; }
 .ios-bleed .bleed-snap { display: block; position: absolute; top: var(--bleed); left: 0; width: 1px; height: 1px;
   scroll-snap-align: start; pointer-events: none; }
@@ -449,7 +448,7 @@ body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0p
 </script>
 
 <script>
-/* Open at the small bleed offset so Safari's glass sees the page behind it. */
+/* .ios-bleed: open scrolled to the bleed; the snap point keeps it there */
 (function(){
   var root = document.documentElement;
   if (!root.classList.contains('ios-bleed')) return;
@@ -465,7 +464,8 @@ body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0p
 })();
 </script>
 <script>
-/* Start the shadow marbling after the page has painted. */
+/* start the shadow marbling a few seconds after the page, fade it in, then drop the page
+   colour so Safari has nothing to tint its bars with */
 setTimeout(function(){
 (function(){
 'use strict';
