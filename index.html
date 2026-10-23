@@ -319,6 +319,8 @@ body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0p
 /* Safari receives a continuously shaded document canvas when it makes its glass backdrop. */
 .ios-bleed { --bleed: 64px; overflow-y: scroll; overscroll-behavior-y: none; scroll-snap-type: y mandatory; }
 .ios-bleed body { min-height: calc(100lvh + var(--bleed)); }
+/* Extend the shaded layer into the space Safari uses for its status and address controls. */
+.ios-bleed .frame-bath { top: calc(-64px - env(safe-area-inset-top, 0px)); bottom: -220px; }
 .bleed-snap { display: none; }
 .ios-bleed .bleed-snap { display: block; position: absolute; top: var(--bleed); left: 0; width: 1px; height: 1px;
   scroll-snap-align: start; pointer-events: none; }
@@ -463,7 +465,7 @@ body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0p
 setTimeout(function(){
 (function(){
 'use strict';
-const CFG = {"optics":"flat","plate":"#3f5d77","palettes":[{"name":"stone paper","ink":["#c4bead","#23211f","#e9b650","#cd4636","#e3ddcc","#3f5d77"]}],"share":[0.24,0.12,0.16,0.12,0.1,0.26],"ground":5,"deal":true,"hot":0,"vig":0,"shade":0.35,"grain":0.012,"instant":true,"fade":0.01,"frame":"body","shadow":{"base":"#33402f","lo":0.6,"hi":1.35,"grain":0.055,"inset":-4},"noInput":"a, button","edgeBias":0};
+const CFG = {"optics":"flat","plate":"#3f5d77","palettes":[{"name":"stone paper","ink":["#c4bead","#23211f","#e9b650","#cd4636","#e3ddcc","#3f5d77"]}],"share":[0.24,0.12,0.16,0.12,0.1,0.26],"ground":5,"deal":true,"hot":0,"vig":0,"shade":0.35,"grain":0.012,"instant":true,"fade":0.01,"frame":".frame-bath","shadow":{"base":"#33402f","lo":0.6,"hi":1.35,"grain":0.055,"inset":-4},"noInput":"a, button","edgeBias":0};
 const cv = document.getElementById('marble-canvas');
 if (!cv) return;
 
