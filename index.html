@@ -271,6 +271,8 @@ body{color:var(--ab-cream)}
 .header{margin-bottom:46px}
 h1{font-family:var(--ab-sharp); color:var(--ab-cream); letter-spacing:.16em; text-indent:.16em; margin-bottom:18px}
 .chapter{font-family:var(--ab-book); font-size:11px; letter-spacing:.42em; text-indent:.42em; color:var(--ab-cream); margin:0 0 22px}
+a.chapter{text-decoration:none; transition:opacity .15s}
+a.chapter:hover{opacity:.72}
 /* the cover's reversed-out label */
 .subtitle{display:inline-block; max-width:none; background:var(--ab-cream); color:var(--ab-green);
   font-family:var(--ab-book); font-style:normal; font-size:12px; letter-spacing:.3em; text-indent:.3em;
@@ -304,7 +306,7 @@ h1{text-indent:.10em}
    Safari paint its bars solid), faded in once the bath is drawing. 100lvh reaches under
    Safari's bars; the page fits one screen, so the layer never needs to scroll with it. */
 .frame-bath { position: absolute; top: 0; left: 0; right: 0; height: 100%; height: 100lvh;
-  z-index: -1; pointer-events: none; opacity: 0; transition: opacity 3.0s ease; }
+  z-index: -1; pointer-events: none; opacity: 0; transition: opacity 6.0s ease; }
 .frame-bath.on { opacity: 1; }
 #marble-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 /* the shadow fills the root's box, so it must reach the bottom of the window */
@@ -350,7 +352,7 @@ body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0p
   <!-- Header -->
   <div class="header">
     <h1>M A C R O</h1>
-    <span class="chapter">Sam Annand</span>
+    <a class="chapter" href="https://samannand.net">Sam Annand</a>
     <p class="subtitle">Macrotonal Tools for Performers</p>
   </div>
 
@@ -370,9 +372,6 @@ body { padding-top: calc(clamp(16px, 4.4svh, 48px) + env(safe-area-inset-top, 0p
     </a>
     <a class="tool-card" href="/harp/" target="_blank">
       <div class="tool-name">Harp Enharmonic Spelling</div>
-    </a>
-    <a class="tool-card" href="/scores/hocket.html" target="_blank">
-      <div class="tool-name">Saxophone Hocket</div>
     </a>
     <a class="tool-card" href="/macrokey/" target="_blank">
       <div class="tool-name">Theory Reference</div>
@@ -1873,7 +1872,8 @@ function stepSim(dt){
   autopilot(dt);
 
   /* press and hold: pour paint that keeps spreading while held */
-  if (pDown && pHolding && !pMoved && !pour && performance.now() - pT0 >= HOLD_MS){
+  /* CFG.noPour: a page full of controls keeps press-and-hold for itself */
+  if (pDown && pHolding && !pMoved && !pour && !CFG.noPour && performance.now() - pT0 >= HOLD_MS){
     const w = toWorld(pX, pY);
     if (w.inside){
       pour = newDrop(w.x, w.y, 0.2, liveInk(0.12, lastInk), 1);
